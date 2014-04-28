@@ -80,6 +80,23 @@ module Mongoid #:nodoc:
      documents_for(document.class)[selector] = document
     end
 
+    # Set a custom field in the identity map
+    #
+    # @example Set the custom field in the map.
+    #   identity_map.set_custom_fields("current_user_liked", like.id, true)
+    #
+    # @param [ Identifier ] custom field identifier.
+    # @param [ Key ] custom field hash key.
+    # @param [ Value ] custom field value for following key.
+    #
+    # @return [ Hash ] The matching hash.
+    #
+    # @since 2.2.0
+    def set_custom_fields(identifier, key, value)
+      return nil unless Mongoid.identity_map_enabled? && key && value
+      ((self["custom_fields"] ||= {})[identifier] ||= {})[key] = value
+    end
+
     private
 
     # Get the documents in the identity map for a specific class.
