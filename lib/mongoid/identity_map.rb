@@ -92,7 +92,7 @@ module Mongoid #:nodoc:
     # @return [ Hash ] The matching hash.
     #
     # @since 2.2.0
-    def set_custom_fields(identifier, key, value)
+    def set_custom_fields_hash(identifier, key, value)
       return nil unless Mongoid.identity_map_enabled? && key && value
       ((self["custom_fields"] ||= {})[identifier] ||= {})[key] = value
     end
