@@ -21,7 +21,11 @@ module Mongoid #:nodoc:
           memo[k.to_sym] = v
           memo
         end
-        connection = Mongo::MongoReplicaSetClient.new(hosts)
+        # connection = Mongo::MongoReplicaSetClient.new(hosts)
+	params = []
+	params << hosts
+	params << options
+	connection = Mongo::ReplSetConnection.new(*params)
 
         if authenticating?
           connection.add_auth(database, username, password)
