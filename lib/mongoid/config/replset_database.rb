@@ -21,7 +21,6 @@ module Mongoid #:nodoc:
           memo[k.to_sym] = v
           memo
         end
-        # connection = Mongo::MongoReplicaSetClient.new(hosts)
 	params = []
 	params << hosts
 	params << options
