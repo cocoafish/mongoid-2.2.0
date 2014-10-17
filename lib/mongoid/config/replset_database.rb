@@ -18,13 +18,28 @@ module Mongoid #:nodoc:
         # "A list of host-port pairs ending with a hash containing any options"
         # mongo likes symbols
         options = self.inject({ :logger => Mongoid::Logger.new }) do |memo, (k, v)|
-          memo[k.to_sym] = v
+          # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
+          memo[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k)
+                    
           memo
+        end    
+        
+        # mongo ruby driver 1.11.1 just accept the following structure:
+        # [["localhost", 27017], ["localhost", 27017]], {options}]
+        # we didn't want to change the current mongoid.yml, so the following code is constructing the above structure.
+        new_hosts = []
+        begin
+          hosts.each do |item|
+            new_hosts << (item[0] + ":" + item[1].to_s)
+          end
+        rescue Exception => e
+          raise "Please check mongoid.yml and use the proper format."
         end
-	params = []
-	params << hosts
-	params << options
-	connection = Mongo::ReplSetConnection.new(*params)
+        
+      	params = []
+      	params << new_hosts
+      	params << options
+      	connection = Mongo::ReplSetConnection.new(*params)
 
         if authenticating?
           connection.add_auth(database, username, password)

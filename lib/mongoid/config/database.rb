@@ -86,7 +86,13 @@ module Mongoid #:nodoc:
       #
       # @since 2.0.0.rc.1
       def master
-        Mongo::Connection.from_uri(uri(self), optional).tap do |conn|
+        # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
+        new_option = {}
+        optional.each do |k, v|
+          new_option[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k.to_s)
+        end
+        
+        Mongo::Connection.from_uri(uri(self), new_option).tap do |conn|
           conn.apply_saved_authentication
         end
       end
@@ -100,9 +106,15 @@ module Mongoid #:nodoc:
       # @return [ Array<Mongo::Connection> ] The mongo slave connections.
       #
       # @since 2.0.0.rc.1
-      def slaves
+      def slaves  
         (self["slaves"] || []).map do |options|
-          Mongo::Connection.from_uri(uri(options), optional(true)).tap do |conn|
+          # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
+          new_option = {}
+           optional(true).each do |k, v|
+            new_option[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k.to_s)
+          end
+                 
+          Mongo::Connection.from_uri(uri(options), new_option).tap do |conn|
             conn.apply_saved_authentication
           end
         end
