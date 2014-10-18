@@ -86,7 +86,7 @@ module Mongoid #:nodoc:
       #
       # @since 2.0.0.rc.1
       def master
-        # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options
+        # some options are not accepted by new mongo ruby driver 1.11.1, so just pass valid options
         option = { :logger => logger? ? Mongoid::Logger.new : nil }
         option.merge!(:pool_size => pool_size) if pool_size 
   
@@ -106,7 +106,7 @@ module Mongoid #:nodoc:
       # @since 2.0.0.rc.1
       def slaves  
         (self["slaves"] || []).map do |options|
-          # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options
+          # some options are not accepted by new mongo ruby driver 1.11.1, so just pass valid options
           option = { :logger => logger? ? Mongoid::Logger.new : nil }
           option.merge!(:pool_size => pool_size) if pool_size
 

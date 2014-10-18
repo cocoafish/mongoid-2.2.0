@@ -14,7 +14,7 @@ module Mongoid #:nodoc:
       #
       # @since 2.0.0.rc.5
       def configure  
-        # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options      
+        # some options are not accepted by new mongo ruby driver 1.11.1, so just pass valid options      
         options = { :logger => Mongoid::Logger.new }
         options.merge!(:pool_size => self[:pool_size]) if self["pool_size"]
         
