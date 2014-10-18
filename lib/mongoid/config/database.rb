@@ -86,13 +86,11 @@ module Mongoid #:nodoc:
       #
       # @since 2.0.0.rc.1
       def master
-        # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
-        new_option = {}
-        optional.each do |k, v|
-          new_option[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k.to_s)
-        end
-        
-        Mongo::Connection.from_uri(uri(self), new_option).tap do |conn|
+        # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options
+        option = { :logger => logger? ? Mongoid::Logger.new : nil }
+        option.merge!(:pool_size => pool_size) if pool_size 
+  
+        Mongo::Connection.from_uri(uri(self), option).tap do |conn|
           conn.apply_saved_authentication
         end
       end
@@ -108,13 +106,11 @@ module Mongoid #:nodoc:
       # @since 2.0.0.rc.1
       def slaves  
         (self["slaves"] || []).map do |options|
-          # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
-          new_option = {}
-           optional(true).each do |k, v|
-            new_option[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k.to_s)
-          end
-                 
-          Mongo::Connection.from_uri(uri(options), new_option).tap do |conn|
+          # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options
+          option = { :logger => logger? ? Mongoid::Logger.new : nil }
+          option.merge!(:pool_size => pool_size) if pool_size
+
+          Mongo::Connection.from_uri(uri(options), option).tap do |conn|
             conn.apply_saved_authentication
           end
         end

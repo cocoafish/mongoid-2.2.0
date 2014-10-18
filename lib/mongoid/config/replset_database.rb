@@ -13,16 +13,10 @@ module Mongoid #:nodoc:
       # @return [ Array<Mongo::DB, nil ] The Mongo databases.
       #
       # @since 2.0.0.rc.5
-      def configure
-        # yes, construction is weird but the driver wants 
-        # "A list of host-port pairs ending with a hash containing any options"
-        # mongo likes symbols
-        options = self.inject({ :logger => Mongoid::Logger.new }) do |memo, (k, v)|
-          # some options are not accepted by new mongo ruby driver 1.11.1, so remove invalid options
-          memo[k.to_sym] = v if !EXCLUDE_OPTIONS.include?(k)
-                    
-          memo
-        end    
+      def configure  
+        # some options are not accepted by new mongo ruby driver 1.11.1, so just puass valid options      
+        options = { :logger => Mongoid::Logger.new }
+        options.merge!(:pool_size => self[:pool_size]) if self["pool_size"]
         
         # mongo ruby driver 1.11.1 just accept the following structure:
         # [["localhost", 27017], ["localhost", 27017]], {options}]
@@ -36,9 +30,7 @@ module Mongoid #:nodoc:
           raise "Please check mongoid.yml and use the proper format."
         end
         
-      	params = []
-      	params << new_hosts
-      	params << options
+      	params = [new_hosts, options]
       	connection = Mongo::ReplSetConnection.new(*params)
 
         if authenticating?

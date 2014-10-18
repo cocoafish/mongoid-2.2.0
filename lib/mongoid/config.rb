@@ -16,10 +16,6 @@ module Mongoid #:nodoc
     attr_accessor :master, :settings, :defaults
     @settings = {}
     @defaults = {}
-
-    # some options are not accepted by new mongo ruby driver 1.11.1
-    EXCLUDE_OPTIONS = ["identity_map_enabled", "autocreate_indexes", "max_retries_on_connection_failure", 
-      "hosts", "databases", "database", "username", "password", "slave_ok", "host"]
       
     # Define a configuration option with a default.
     #
