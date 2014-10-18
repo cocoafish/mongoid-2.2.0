@@ -16,7 +16,7 @@ module Mongoid #:nodoc
     attr_accessor :master, :settings, :defaults
     @settings = {}
     @defaults = {}
-      
+
     # Define a configuration option with a default.
     #
     # @example Define the option.
