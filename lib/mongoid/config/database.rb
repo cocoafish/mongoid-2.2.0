@@ -86,7 +86,11 @@ module Mongoid #:nodoc:
       #
       # @since 2.0.0.rc.1
       def master
-        Mongo::Connection.from_uri(uri(self), optional).tap do |conn|
+        # some options are not accepted by new mongo ruby driver 1.11.1, so just pass valid options
+        option = { :logger => logger? ? Mongoid::Logger.new : nil }
+        option.merge!(:pool_size => pool_size) if pool_size 
+  
+        Mongo::Connection.from_uri(uri(self), option).tap do |conn|
           conn.apply_saved_authentication
         end
       end
@@ -100,9 +104,13 @@ module Mongoid #:nodoc:
       # @return [ Array<Mongo::Connection> ] The mongo slave connections.
       #
       # @since 2.0.0.rc.1
-      def slaves
+      def slaves  
         (self["slaves"] || []).map do |options|
-          Mongo::Connection.from_uri(uri(options), optional(true)).tap do |conn|
+          # some options are not accepted by new mongo ruby driver 1.11.1, so just pass valid options
+          option = { :logger => logger? ? Mongoid::Logger.new : nil }
+          option.merge!(:pool_size => pool_size) if pool_size
+
+          Mongo::Connection.from_uri(uri(options), option).tap do |conn|
             conn.apply_saved_authentication
           end
         end
