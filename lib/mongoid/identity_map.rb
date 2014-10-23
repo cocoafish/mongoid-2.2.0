@@ -83,7 +83,7 @@ module Mongoid #:nodoc:
     # Set a custom field in the identity map
     #
     # @example Set the custom field in the map.
-    #   identity_map.set_custom_fields("current_user_liked", like.id, true)
+    #   identity_map.set_custom_fields_hash("current_user_liked", like.id, true)
     #
     # @param [ Identifier ] custom field identifier.
     # @param [ Key ] custom field hash key.
@@ -92,7 +92,7 @@ module Mongoid #:nodoc:
     # @return [ Hash ] The matching hash.
     #
     # @since 2.2.0
-    def set_custom_fields(identifier, key, value)
+    def set_custom_fields_hash(identifier, key, value)
       return nil unless Mongoid.identity_map_enabled? && key && value
       ((self["custom_fields"] ||= {})[identifier] ||= {})[key] = value
     end
